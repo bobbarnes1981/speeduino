@@ -381,7 +381,8 @@ void triggerPri_missingTooth()
 {
    curTime = micros();
    curGap = curTime - toothLastToothTime;
-   if ( curGap >= triggerFilterTime ) //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger. (A 36-1 wheel at 8000pm will have triggers approx. every 200uS)
+   // disable filter while cranking
+   if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) || curGap >= triggerFilterTime ) //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger. (A 36-1 wheel at 8000pm will have triggers approx. every 200uS)
    {
      toothCurrentCount++; //Increment the tooth counter
      validTrigger = true; //Flag this pulse as being a valid trigger (ie that it passed filters)
