@@ -253,11 +253,11 @@ static inline void setFilter(unsigned long curGap)
   if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
   {
     // not added to config page, hard coded here
-    byte crankTriggerFilter = 2
-    if(cranktriggerFilter == 0) { triggerFilterTime = 0; } //trigger filter is turned off.
-    else if(cranktriggerFilter == 1) { triggerFilterTime = curGap >> 2; } //Lite filter level is 25% of previous gap
-    else if(cranktriggerFilter == 2) { triggerFilterTime = curGap >> 1; } //Medium filter level is 50% of previous gap
-    else if (cranktriggerFilter == 3) { triggerFilterTime = (curGap * 3) >> 2; } //Aggressive filter level is 75% of previous gap
+    byte crankTriggerFilter = 2;
+    if(crankTriggerFilter == 0) { triggerFilterTime = 0; } //trigger filter is turned off.
+    else if(crankTriggerFilter == 1) { triggerFilterTime = curGap >> 2; } //Lite filter level is 25% of previous gap
+    else if(crankTriggerFilter == 2) { triggerFilterTime = curGap >> 1; } //Medium filter level is 50% of previous gap
+    else if (crankTriggerFilter == 3) { triggerFilterTime = (curGap * 3) >> 2; } //Aggressive filter level is 75% of previous gap
     else { triggerFilterTime = 0; } //trigger filter is turned off.
   }
   else
