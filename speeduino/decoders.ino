@@ -250,11 +250,24 @@ static inline uint16_t stdGetRPM(uint16_t degreesOver)
  */
 static inline void setFilter(unsigned long curGap)
 {
-  if(configPage4.triggerFilter == 0) { triggerFilterTime = 0; } //trigger filter is turned off.
-  else if(configPage4.triggerFilter == 1) { triggerFilterTime = curGap >> 2; } //Lite filter level is 25% of previous gap
-  else if(configPage4.triggerFilter == 2) { triggerFilterTime = curGap >> 1; } //Medium filter level is 50% of previous gap
-  else if (configPage4.triggerFilter == 3) { triggerFilterTime = (curGap * 3) >> 2; } //Aggressive filter level is 75% of previous gap
-  else { triggerFilterTime = 0; } //trigger filter is turned off.
+  if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
+  {
+    // not added to config page, hard coded here
+    byte crankTriggerFilter = 2
+    if(cranktriggerFilter == 0) { triggerFilterTime = 0; } //trigger filter is turned off.
+    else if(cranktriggerFilter == 1) { triggerFilterTime = curGap >> 2; } //Lite filter level is 25% of previous gap
+    else if(cranktriggerFilter == 2) { triggerFilterTime = curGap >> 1; } //Medium filter level is 50% of previous gap
+    else if (cranktriggerFilter == 3) { triggerFilterTime = (curGap * 3) >> 2; } //Aggressive filter level is 75% of previous gap
+    else { triggerFilterTime = 0; } //trigger filter is turned off.
+  }
+  else
+  {
+    if(configPage4.triggerFilter == 0) { triggerFilterTime = 0; } //trigger filter is turned off.
+    else if(configPage4.triggerFilter == 1) { triggerFilterTime = curGap >> 2; } //Lite filter level is 25% of previous gap
+    else if(configPage4.triggerFilter == 2) { triggerFilterTime = curGap >> 1; } //Medium filter level is 50% of previous gap
+    else if (configPage4.triggerFilter == 3) { triggerFilterTime = (curGap * 3) >> 2; } //Aggressive filter level is 75% of previous gap
+    else { triggerFilterTime = 0; } //trigger filter is turned off.    
+  }
 }
 
 /**
@@ -381,8 +394,7 @@ void triggerPri_missingTooth()
 {
    curTime = micros();
    curGap = curTime - toothLastToothTime;
-   // disable filter while cranking
-   if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) || curGap >= triggerFilterTime ) //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger. (A 36-1 wheel at 8000pm will have triggers approx. every 200uS)
+   if ( curGap >= triggerFilterTime ) //Pulses should never be less than triggerFilterTime, so if they are it means a false trigger. (A 36-1 wheel at 8000pm will have triggers approx. every 200uS)
    {
      toothCurrentCount++; //Increment the tooth counter
      validTrigger = true; //Flag this pulse as being a valid trigger (ie that it passed filters)
